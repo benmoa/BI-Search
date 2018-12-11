@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="BI-Search:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4da33af8-407b-4dd1-bb70-2f36f69d0c27" name="Default" comment="" />
+    <ignored path="$PROJECT_DIR$/out/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/BI_Search$Main.ic" NAME="Main Coverage Results" MODIFIED="1543679962569" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/BI_Search$Main.coverage" NAME="Main Coverage Results" MODIFIED="1544114935353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
+      <file leaf-file-name="Indexer.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Model/Indexer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1479">
+              <caret line="184" column="45" selection-start-line="184" selection-start-column="45" selection-end-line="184" selection-end-column="45" />
+              <folding>
+                <element signature="method#Indexer#0;class#Indexer#0" />
+                <element signature="method#CreateMapOfAllCountries#0;class#Indexer#0" />
+                <element signature="method#addFileToTermIndex#0;class#Indexer#0" />
+                <element signature="method#mergePosting#0;class#Indexer#0" />
+                <element signature="method#MergeTwoFiles#0;class#Indexer#0" />
+                <element signature="method#openPostingFiles#0;class#Indexer#0" />
+                <element signature="method#FinalMergeToTerms#0;class#Indexer#0" />
+                <element signature="method#FinalMergeToCountries#0;class#Indexer#0" />
+                <element signature="method#writeMapsToFile#0;class#Indexer#0" />
+                <element signature="method#writeDocsMapToFile#0;class#Indexer#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BI_Controller.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Controller/BI_Controller.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="680">
+              <caret line="63" column="17" selection-start-line="63" selection-start-column="17" selection-end-line="63" selection-end-column="17" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#initialize#0;class#BI_Controller#0" />
+                <element signature="method#setImage#0;class#BI_Controller#0" />
+                <element signature="method#pathOfCorpus#0;class#BI_Controller#0" />
+                <element signature="method#pathOfCache#0;class#BI_Controller#0" />
+                <element signature="method#savingPath#0;class#BI_Controller#0" />
+                <element signature="method#browse#0;class#BI_Controller#0" />
+                <element signature="method#reset#0;class#BI_Controller#0" />
+                <element signature="method#deleteDirectory#0;class#BI_Controller#0" />
+                <element signature="method#viewDictionary#0;class#BI_Controller#0" />
+                <element signature="method#LoadCache#0;class#BI_Controller#0" />
+                <element signature="method#ReadObjectFromFile#0;class#BI_Controller#0" />
+                <element signature="method#AreMapsExistsOnDisk#0;class#BI_Controller#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BI_View.fxml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/View/BI_View.fxml">
+          <provider editor-type-id="text-editor">
+            <state relative-caret-position="884">
+              <caret line="52" column="23" selection-start-line="52" selection-start-column="23" selection-end-line="52" selection-end-column="23" />
+            </state>
+          </provider>
+          <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+        </entry>
+      </file>
+      <file leaf-file-name="Document.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Model/Document.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="262">
+              <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
+              <folding>
+                <element signature="method#Document#0;class#Document#0" />
+                <element signature="method#Document#1;class#Document#0" />
+                <element signature="method#setFile_path#0;class#Document#0" />
+                <element signature="method#setDate#0;class#Document#0" />
+                <element signature="method#toString#0;class#Document#0" />
+                <element signature="e#3732#3733#0" expanded="true" />
+                <element signature="e#3765#3766#0" expanded="true" />
+                <element signature="e#3804#3805#0" expanded="true" />
+                <element signature="e#3839#3840#0" expanded="true" />
+                <element signature="e#3879#3880#0" expanded="true" />
+                <element signature="e#3915#3916#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Parse.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/Model/Parse.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1496">
+              <caret line="923" column="5" selection-start-line="923" selection-start-column="5" selection-end-line="923" selection-end-column="5" />
+              <folding>
+                <element signature="e#1405#1981#0" />
+                <element signature="e#1986#3008#0" />
+                <element signature="e#3013#5586#0" />
+                <element signature="e#5591#6389#0" />
+                <element signature="e#6547#6840#0" />
+                <element signature="e#6845#7074#0" />
+                <element signature="e#7554#7946#0" />
+                <element signature="e#7951#8355#0" />
+                <element signature="e#8360#8600#0" />
+                <element signature="e#8605#9131#0" />
+                <element signature="e#9136#9416#0" />
+                <element signature="e#9585#9970#0" />
+                <element signature="e#10420#10846#0" />
+                <element signature="e#10851#11278#0" />
+                <element signature="e#11283#12736#0" />
+                <element signature="e#11556#11608#0" />
+                <element signature="e#12741#13150#0" />
+                <element signature="e#13155#36057#0" />
+                <element signature="e#36062#36926#0" />
+                <element signature="e#36931#38657#0" />
+                <element signature="e#38662#40258#0" />
+                <element signature="e#40263#41191#0" />
+                <element signature="e#41196#41489#0" />
+                <element signature="e#41494#42303#0" />
+                <element signature="e#42308#42473#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ReadFile.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Model/ReadFile.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
+              <folding>
+                <element signature="method#ReadFile#0;class#ReadFile#0" />
+                <element signature="method#readAllFiles#0;class#ReadFile#0" />
+                <element signature="method#readOneFile_addToMap#0;class#ReadFile#0" />
+                <element signature="method#isWord#0;class#ReadFile#0" />
+                <element signature="method#removeTags#0;class#ReadFile#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Model/Main.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="31" column="53" selection-start-line="31" selection-start-column="53" selection-end-line="31" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>cb_language</find>
+      <find>setLanguages</find>
+      <find>stopwor</find>
+      <find>stopword</find>
+      <find>isNu</find>
+      <find>updateLowerUpperCases</find>
+      <find>allTerms_Map</find>
+      <find>linesToPosting</find>
+      <find>mer</find>
+      <find>numbersCount</find>
+      <find>load</find>
+      <find>COPY</find>
+      <find>view</find>
+      <find>dictio</find>
+      <find>lineToPosting_Countries</find>
+      <find>allTermsKeys</find>
+      <find>termsFileIndex</find>
+      <find>Q</find>
+      <find>questi</find>
+      <find>input</find>
+      <find>utf</find>
+      <find>apicou</find>
+      <find>createmap</find>
+      <find>merge</find>
+      <find>loadC</find>
+      <find>tf_loadCache</find>
+      <find>savingDir</find>
+      <find>jframe</find>
+      <find>allTerms_Map_COPY</find>
+      <find>104</find>
+    </findStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/Part_A/StopWords.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Term.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Document.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Stemmer.cs" />
+        <option value="$PROJECT_DIR$/src/Part_A/Stemmer.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Indexer.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Main.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Parse.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/Processor.java" />
+        <option value="$PROJECT_DIR$/src/Part_A/ReadFile.java" />
+        <option value="$PROJECT_DIR$/src/Controller/Controller.java" />
+        <option value="$PROJECT_DIR$/src/Model/Term.java" />
+        <option value="$PROJECT_DIR$/src/Model/CacheRecord.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Controller/BI_Controller.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Model/Indexer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/View/BI_View.fxml" />
+        <option value="$PROJECT_DIR$/src/main/java/Model/Main.java" />
+        <option value="$PROJECT_DIR$/src/Controller/loadingController.java" />
+        <option value="$PROJECT_DIR$/src/View/loading.fxml" />
+        <option value="$PROJECT_DIR$/src/Model/TermInfo.java" />
+        <option value="$PROJECT_DIR$/src/Model/StopWords.java" />
+        <option value="$PROJECT_DIR$/src/Model/Processor.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/Model/CountryInfo.java" />
+        <option value="$PROJECT_DIR$/src/Model/Main.java" />
+        <option value="$PROJECT_DIR$/src/View/BI_View.fxml" />
+        <option value="$PROJECT_DIR$/src/Model/Indexer.java" />
+        <option value="$PROJECT_DIR$/src/Controller/BI_Controller.java" />
+        <option value="$PROJECT_DIR$/src/Model/ReadFile.java" />
+        <option value="$PROJECT_DIR$/src/Model/Document.java" />
+        <option value="$PROJECT_DIR$/src/Model/Parse.java" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="1614" />
+    <option name="height" value="876" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="BI-Search" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BI-Search" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BI-Search" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BI-Search" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BI-Search" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BI-Search" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BI-Search" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BI-Search" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="Model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BI-Search" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BI-Search" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="View" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/idanrevah/Desktop/אחזור מידע/מנוע חיפוש/BI-Search/src/Model/Parse.java" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../מע' מידע/סמסטר ד/תכנות/ATP – Project – PartC - WASD" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\idanrevah\Desktop\אחזור מידע\מנוע חיפוש\BI-Search\src\View" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="Controller" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="Model" />
+      <recent name="Part_A" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="Model.Main" />
+      <module name="BI-Search" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4da33af8-407b-4dd1-bb70-2f36f69d0c27" name="Default" comment="" />
+      <created>1541003470580</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1541003470580</updated>
+      <workItem from="1541003474205" duration="9000" />
+      <workItem from="1541003520478" duration="14230000" />
+      <workItem from="1541070868403" duration="14815000" />
+      <workItem from="1541276750538" duration="1857000" />
+      <workItem from="1541351928617" duration="16548000" />
+      <workItem from="1541434507248" duration="879000" />
+      <workItem from="1541436603981" duration="14354000" />
+      <workItem from="1541518932461" duration="2232000" />
+      <workItem from="1541594362053" duration="614000" />
+      <workItem from="1541682310002" duration="9879000" />
+      <workItem from="1541883497627" duration="3050000" />
+      <workItem from="1542037298553" duration="3530000" />
+      <workItem from="1542378797551" duration="684000" />
+      <workItem from="1542552165870" duration="15121000" />
+      <workItem from="1542625608654" duration="2455000" />
+      <workItem from="1542640301225" duration="10783000" />
+      <workItem from="1542658987272" duration="521000" />
+      <workItem from="1542805937821" duration="2693000" />
+      <workItem from="1542823290802" duration="8569000" />
+      <workItem from="1542881659450" duration="1335000" />
+      <workItem from="1542901335295" duration="481000" />
+      <workItem from="1542910690216" duration="60000" />
+      <workItem from="1542968829828" duration="9737000" />
+      <workItem from="1543056157305" duration="17341000" />
+      <workItem from="1543076632253" duration="31000" />
+      <workItem from="1543150313117" duration="3459000" />
+      <workItem from="1543170718601" duration="9519000" />
+      <workItem from="1543224648280" duration="1250000" />
+      <workItem from="1543238457098" duration="3854000" />
+      <workItem from="1543244885794" duration="44000" />
+      <workItem from="1543330738866" duration="15384000" />
+      <workItem from="1543347338331" duration="9172000" />
+      <workItem from="1543402136050" duration="2757000" />
+      <workItem from="1543412325794" duration="13175000" />
+      <workItem from="1543427116057" duration="16563000" />
+      <workItem from="1543484589559" duration="11549000" />
+      <workItem from="1543497591929" duration="6231000" />
+      <workItem from="1543583693216" duration="8218000" />
+      <workItem from="1543593372831" duration="689000" />
+      <workItem from="1543594316933" duration="4126000" />
+      <workItem from="1543660622078" duration="4411000" />
+      <workItem from="1543669305919" duration="8831000" />
+      <workItem from="1543679516455" duration="447000" />
+      <workItem from="1543696905606" duration="1509000" />
+      <workItem from="1543754734713" duration="4984000" />
+      <workItem from="1543773621541" duration="17735000" />
+      <workItem from="1543831867591" duration="4475000" />
+      <workItem from="1543837204986" duration="2063000" />
+      <workItem from="1543850701600" duration="2279000" />
+      <workItem from="1543855146002" duration="13325000" />
+      <workItem from="1543870319565" duration="55000" />
+      <workItem from="1543870555802" duration="5382000" />
+      <workItem from="1543876186642" duration="884000" />
+      <workItem from="1543938853600" duration="14063000" />
+      <workItem from="1544010816081" duration="2609000" />
+      <workItem from="1544014597173" duration="2370000" />
+      <workItem from="1544025587701" duration="11516000" />
+      <workItem from="1544043328972" duration="751000" />
+      <workItem from="1544045191186" duration="1194000" />
+      <workItem from="1544090917757" duration="7205000" />
+      <workItem from="1544098601202" duration="9291000" />
+      <workItem from="1544115434141" duration="1229000" />
+      <workItem from="1544116936046" duration="3273000" />
+      <workItem from="1544120275459" duration="3000" />
+      <workItem from="1544120467303" duration="215000" />
+      <workItem from="1544120934084" duration="341000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="378238000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <layout>
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.3257143" />
+      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info id="Image Layers" order="2" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="right" id="Maven Projects" order="3" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3281787" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17174083" />
+      <window_info anchor="right" id="Database" order="3" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info id="UI Designer" order="2" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3298969" />
+      <window_info anchor="right" id="Coverage" order="4" side_tool="true" weight="0.3296875" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.23542857" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url />
+          <line>31</line>
+          <properties />
+          <option name="timeStamp" value="171" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url />
+          <line>71</line>
+          <properties />
+          <option name="timeStamp" value="174" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url />
+          <line>63</line>
+          <properties />
+          <option name="timeStamp" value="176" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url />
+          <line>261</line>
+          <properties />
+          <option name="timeStamp" value="254" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Controller/BI_Controller.java</url>
+          <line>205</line>
+          <properties />
+          <option name="timeStamp" value="290" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="294" />
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="readFile.languagesOfDocs" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>readFile.languagesOfDocs</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>processor.indexer.ansFromAPI</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((HashMap) processor.indexer.countryMap)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((HashMap) processor.parser.allTerms_Map).size</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>((HashMap) processor.indexer.countryMap).size</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>tfForDoc.get(&quot;moscow&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>tfForDoc.get(&quot;MOSCOW&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>tfForDoc.get(&quot;Moscow&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Collections.sort(new ArrayList&lt;&gt;(allTerms_Map_COPY.keySet()))</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>allTerms_Map_COPY</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/ReadFile.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Document.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Parse.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Main.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Parse.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/ReadFile.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Main.java" />
+    <entry file="file://$PROJECT_DIR$/src/Part_A/Stemmer-Java.txt" />
+    <entry file="file://$PROJECT_DIR$/src/Part_A/Stemmer.cs" />
+    <entry file="file://$PROJECT_DIR$/src/Part_A/Indexe.java" />
+    <entry file="file://$PROJECT_DIR$/src/Controller/BI-Controller.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Stemmer.java" />
+    <entry file="file://$PROJECT_DIR$/src/Parse.java" />
+    <entry file="file://$PROJECT_DIR$/src/Parseלפני העתקה מבן 19.11.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19173">
+          <caret line="614" selection-start-line="614" selection-end-line="614" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/lang/Character.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="5792" column="26" selection-start-line="5792" selection-start-column="26" selection-end-line="5792" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/CountryInfo.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/StopWords.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Term.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Document.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/TermInfo.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/CacheRecord.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Processor.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/ReadFile.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Indexer.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/View/BI_View.fxml" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Controller/BI_Controller.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Main.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Parse.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/lang/NumberFormatException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1221">
+          <caret line="64" selection-start-line="64" selection-end-line="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Term.java" />
+    <entry file="file://$PROJECT_DIR$/src/Model/CacheRecord.java" />
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/javax/swing/JFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="122" column="13" selection-start-line="122" selection-start-column="13" selection-end-line="122" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/javafx-src.zip!/javafx/collections/MapChangeListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/View/loading.fxml" />
+    <entry file="file://$PROJECT_DIR$/src/Controller/loadingController.java" />
+    <entry file="file://$PROJECT_DIR$/src/Model/TermInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-10">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Stemmer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="19" column="6" selection-start-line="19" selection-start-column="6" selection-end-line="19" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/StopWords.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="413">
+          <caret line="36" column="40" selection-start-line="36" selection-start-column="40" selection-end-line="36" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="34" column="21" selection-start-line="34" selection-start-column="21" selection-end-line="34" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/CountryInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="15" column="62" selection-start-line="15" selection-start-column="62" selection-end-line="15" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Processor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="10" column="51" selection-start-line="10" selection-start-column="51" selection-end-line="10" selection-end-column="51" />
+          <folding>
+            <element signature="method#Parse#0;class#Processor#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Indexer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1479">
+          <caret line="184" column="45" selection-start-line="184" selection-start-column="45" selection-end-line="184" selection-end-column="45" />
+          <folding>
+            <element signature="method#Indexer#0;class#Indexer#0" />
+            <element signature="method#CreateMapOfAllCountries#0;class#Indexer#0" />
+            <element signature="method#addFileToTermIndex#0;class#Indexer#0" />
+            <element signature="method#mergePosting#0;class#Indexer#0" />
+            <element signature="method#MergeTwoFiles#0;class#Indexer#0" />
+            <element signature="method#openPostingFiles#0;class#Indexer#0" />
+            <element signature="method#FinalMergeToTerms#0;class#Indexer#0" />
+            <element signature="method#FinalMergeToCountries#0;class#Indexer#0" />
+            <element signature="method#writeMapsToFile#0;class#Indexer#0" />
+            <element signature="method#writeDocsMapToFile#0;class#Indexer#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="31" column="53" selection-start-line="31" selection-start-column="53" selection-end-line="31" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/javafx-src.zip!/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="1772" selection-start-line="1772" selection-end-line="1772" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/javafx-src.zip!/javafx/scene/image/ImageView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="187" column="22" selection-start-line="187" selection-start-column="22" selection-end-line="187" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/View/BI_View.fxml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="52" column="23" selection-start-line="52" selection-start-column="23" selection-end-line="52" selection-end-column="23" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/BI_Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="63" column="17" selection-start-line="63" selection-start-column="17" selection-end-line="63" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#initialize#0;class#BI_Controller#0" />
+            <element signature="method#setImage#0;class#BI_Controller#0" />
+            <element signature="method#pathOfCorpus#0;class#BI_Controller#0" />
+            <element signature="method#pathOfCache#0;class#BI_Controller#0" />
+            <element signature="method#savingPath#0;class#BI_Controller#0" />
+            <element signature="method#browse#0;class#BI_Controller#0" />
+            <element signature="method#reset#0;class#BI_Controller#0" />
+            <element signature="method#deleteDirectory#0;class#BI_Controller#0" />
+            <element signature="method#viewDictionary#0;class#BI_Controller#0" />
+            <element signature="method#LoadCache#0;class#BI_Controller#0" />
+            <element signature="method#ReadObjectFromFile#0;class#BI_Controller#0" />
+            <element signature="method#AreMapsExistsOnDisk#0;class#BI_Controller#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/ReadFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+          <folding>
+            <element signature="method#ReadFile#0;class#ReadFile#0" />
+            <element signature="method#readAllFiles#0;class#ReadFile#0" />
+            <element signature="method#readOneFile_addToMap#0;class#ReadFile#0" />
+            <element signature="method#isWord#0;class#ReadFile#0" />
+            <element signature="method#removeTags#0;class#ReadFile#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Document.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
+          <folding>
+            <element signature="method#Document#0;class#Document#0" />
+            <element signature="method#Document#1;class#Document#0" />
+            <element signature="method#setFile_path#0;class#Document#0" />
+            <element signature="method#setDate#0;class#Document#0" />
+            <element signature="method#toString#0;class#Document#0" />
+            <element signature="e#3732#3733#0" expanded="true" />
+            <element signature="e#3765#3766#0" expanded="true" />
+            <element signature="e#3804#3805#0" expanded="true" />
+            <element signature="e#3839#3840#0" expanded="true" />
+            <element signature="e#3879#3880#0" expanded="true" />
+            <element signature="e#3915#3916#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Model/Parse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1496">
+          <caret line="923" column="5" selection-start-line="923" selection-start-column="5" selection-end-line="923" selection-end-column="5" />
+          <folding>
+            <element signature="e#1405#1981#0" />
+            <element signature="e#1986#3008#0" />
+            <element signature="e#3013#5586#0" />
+            <element signature="e#5591#6389#0" />
+            <element signature="e#6547#6840#0" />
+            <element signature="e#6845#7074#0" />
+            <element signature="e#7554#7946#0" />
+            <element signature="e#7951#8355#0" />
+            <element signature="e#8360#8600#0" />
+            <element signature="e#8605#9131#0" />
+            <element signature="e#9136#9416#0" />
+            <element signature="e#9585#9970#0" />
+            <element signature="e#10420#10846#0" />
+            <element signature="e#10851#11278#0" />
+            <element signature="e#11283#12736#0" />
+            <element signature="e#11556#11608#0" />
+            <element signature="e#12741#13150#0" />
+            <element signature="e#13155#36057#0" />
+            <element signature="e#36062#36926#0" />
+            <element signature="e#36931#38657#0" />
+            <element signature="e#38662#40258#0" />
+            <element signature="e#40263#41191#0" />
+            <element signature="e#41196#41489#0" />
+            <element signature="e#41494#42303#0" />
+            <element signature="e#42308#42473#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>BI-Search:jar</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>BI-Search</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
