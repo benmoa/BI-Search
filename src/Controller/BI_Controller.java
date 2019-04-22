@@ -4,19 +4,24 @@ import Model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.swing.*;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.URL;
@@ -41,30 +46,43 @@ public class BI_Controller implements Initializable {
     public TextField tf_loadCache;
     public ChoiceBox cb_language;
 
-    private ReadFile readFile; // creating process to index all corpus
+    // part B
+    public TextField tf_freeQuery;
+    public TextField tf_queriesFiles;
+    public Button btn_run;
+    public Button btn_browseQueriesFiles;
+    public Button btn_runQueries;
+    public MenuButton mb_cities;
+    public CheckBox cb_semantic;
+    public ResultsController resultsController;
+
+
+    private Processor processor; // creating process to index all corpus
     private File savingDir; // keeping saving path dir
+    private HashSet<String> descStopWords;
     //boolean vars to check legality while running
     boolean finish = false;
     boolean running = false;
     boolean cacheAndDict = false;
 
-    private HashMap<String,TermInfo> allTerms_Map_COPY; //loaded cache of the terms map
-    private HashMap<String,CountryInfo> countryMap_COPY;//loaded cache of the countries map
-    private HashMap<String,Document> allDocs_Map_COPY;//loaded cache of the documents map
-
     @Override
     //init logo img and all languages
     public void initialize(URL location, ResourceBundle resources) {
         cb_language.setDisable(true);
+        mb_cities.setDisable(true);
         //set logo image
         setImage(img_logo,"Resources/logo.jpg");
     }
 
     // set all Languages
     private void setLanguages() {
-        cb_language.setDisable(false);
-        cb_language.setItems(FXCollections.observableArrayList(readFile.getLanguagesSet()));
-        cb_language.setValue("English");
+        try {
+            cb_language.setDisable(false);
+            cb_language.setItems(FXCollections.observableArrayList(processor.readFile.getLanguagesSet()));
+            cb_language.setValue("English");
+        }catch (Exception e){
+
+        }
     }
 
     //this function will set image
@@ -118,11 +136,6 @@ public class BI_Controller implements Initializable {
         //check if input is not empty
         if(!(tf_corpus.getText().trim().isEmpty() || tf_savingPath.getText().trim().isEmpty() || running)) {
 
-            // reset copy's maps
-            allDocs_Map_COPY = null;
-            allTerms_Map_COPY = null;
-            countryMap_COPY = null;
-
 
             // loading bar
             JFrame frame = new JFrame("Indexing...");
@@ -146,29 +159,29 @@ public class BI_Controller implements Initializable {
             try { // first we make dir and than read files
                 String path;
                 if(cb_stem.isSelected()) // if checkbox of stem is selected
-                    path = tf_savingPath.getText()+"\\with stemme";
+                    path = tf_savingPath.getText() + "\\with stemme";
                 else
-                    path = tf_savingPath.getText()+"\\without stemme";
+                    path = tf_savingPath.getText() + "\\without stemme";
                 savingDir=new File(path);
                 savingDir.mkdir(); //make dir for with/wothout Stemme
-                readFile = new ReadFile(tf_corpus.getText(), savingDir.getPath(), cb_stem.isSelected());
+                processor = new Processor(tf_corpus.getText(), savingDir.getPath(), cb_stem.isSelected());
                 //read the files
-                readFile.readAllFiles();
+                processor.readAllFiles();
 
                 endTime = System.currentTimeMillis();
 
-                //after the invert indexing, we can use the docs languages in the gui:
+                //after the invert indexing, we can use the docs languages & countries in the GUI:
                 setLanguages();
+                setCountries();
 
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            processor.parser.setIsQuery(false);
 
             long totalTime = (endTime - startTime) / 1000;
-
-            Processor processor = readFile.getProcessor();
 
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             //frame.dispose();
@@ -176,7 +189,7 @@ public class BI_Controller implements Initializable {
             //show information
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Index Information");
-            alert.setContentText("# Of Documents: " + readFile.getTotalNumOfDocs() + "\n" +
+            alert.setContentText("# Of Documents: " + processor.readFile.getTotalNumOfDocs() + "\n" +
                     "# Of Uniq Terms: " + processor.parser.allTerms_Map.size() + "\n" +
                     "# Of Uniq Countries: " + processor.indexer.countryMap.size() + "\n" +
                     "Total Running Time: " + totalTime + " seconds\n");
@@ -215,16 +228,11 @@ public class BI_Controller implements Initializable {
             deleteDirectory(with_postingDir);
             deleteDirectory(without_postingDir);
 
-            //delete loaded docs
-            allTerms_Map_COPY = null;
-            countryMap_COPY = null;
-            allDocs_Map_COPY = null;
-
             //if there was a running index before
-            if ((finish) && (readFile != null)) {
-                readFile.getProcessor().parser.allTerms_Map = null;
-                readFile.getProcessor().indexer.countryMap = null;
-                readFile.allDocs_Map = null;
+            if ((finish) && (processor != null)) {
+                processor.parser.allTerms_Map = new HashMap<>();
+                processor.indexer.countryMap = new HashMap<>();
+                processor.readFile.allDocs_Map = new HashMap<>();
                 cacheAndDict = false;
                 finish = false;
             }
@@ -266,13 +274,8 @@ public class BI_Controller implements Initializable {
         ListView<String> list = new ListView<>();
         ObservableList<String> items = observableArrayList();
         Map<String, TermInfo> dict;
-        if (readFile != null) { // if we want to show original map
-            dict = readFile.getProcessor().parser.allTerms_Map;
-        }
-        else { // if we want to show loaded map
-            dict = allTerms_Map_COPY;
-        }
-        if (dict != null) { // if dic is legal
+        if (processor != null) { // if there is something to show
+            dict = processor.parser.allTerms_Map;
             List<String> sortedTerms = new ArrayList<String>(dict.keySet());
             Collections.sort(sortedTerms, (o1, o2) -> {
                 o1 = o1.toLowerCase();
@@ -308,11 +311,12 @@ public class BI_Controller implements Initializable {
             });
             stage.showAndWait();
         }
-        else if (tf_loadCache.getText().trim().isEmpty() || dict == null) // alert case caused by empty path or no dic at all
+        else // if there is no dictionary in the memory
         {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
-            alert.setContentText("No path entered \n Or no dictionary to load");
+            alert.setContentText("No dictionary to load, \n" +
+                    "Please load cache or run the index");
             alert.showAndWait();
         }
 
@@ -321,7 +325,7 @@ public class BI_Controller implements Initializable {
     //loading the maps to cache
     public void LoadCache(ActionEvent actionEvent) {
         //check if the check box of stem was selected
-        if (tf_loadCache.getText().length() > 0) {
+        if ((tf_loadCache.getText().length() > 0) && (tf_corpus.getText().length() > 0)) {
             String path;
             if (cb_stem.isSelected())  // if checkbox of stem is selected
                 path = tf_loadCache.getText() + "\\with stemme";
@@ -334,10 +338,8 @@ public class BI_Controller implements Initializable {
                 // loading bar
                 JFrame frame = new JFrame("Loading Cache");
                 frame.pack();
-
                 ImageIcon loading = new ImageIcon("Resources/load.gif");
-                frame.add(new JLabel( loading, JLabel.CENTER));
-
+                frame.add(new JLabel(loading, JLabel.CENTER));
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.setSize(390, 300);
                 frame.getContentPane().setBackground(Color.white);
@@ -346,48 +348,46 @@ public class BI_Controller implements Initializable {
                 // end of loading bar
 
                 ReadObjectFromFile(path);
+
+                //set the languages and countries in the GUI
+                setLanguages();
+                setCountries();
+
                 frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Cache uploaded");
-                alert.setContentText("Cache uploaded successfully");
+                alert.setContentText("Cache uploaded successfully to memory");
                 alert.showAndWait();
             } else {//the file not exist
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error");
-                alert.setContentText("no cache to load");
+                alert.setContentText("No cache to load");
                 alert.showAndWait();
             }
-        }
-
-        else { // if loading path is empty
+        } else { // if loading path is empty
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
-            alert.setContentText("You must choose loading path");
+            alert.setContentText("You must choose loading path \n And select the dir that the corpus is in it");
             alert.showAndWait();
         }
     }
 
+
     //this function reads the two maps of info from the disc
     private void ReadObjectFromFile(String path) {
-        boolean isReadFileInitialized = (readFile != null);
-
-        this.allTerms_Map_COPY = new HashMap<>();
-        this.countryMap_COPY = new HashMap<>();
-        this.allDocs_Map_COPY = new HashMap<>();
-
+        //if we load cache and there was no running before:
+        if(processor == null){
+            processor = new Processor(tf_corpus.getText(),tf_loadCache.getText(),cb_stem.isSelected(),true);
+        }
 
         File toRead = new File(path + "/TermsInfoMap");
         try {
             //read the terms map
             FileInputStream fis = new FileInputStream(toRead);
             ObjectInputStream ois = new ObjectInputStream(fis);
-            if (isReadFileInitialized) {
-                readFile.getProcessor().parser.allTerms_Map =  (HashMap<String, TermInfo>) ois.readObject();
-            }
-            else {
-                allTerms_Map_COPY = (HashMap<String, TermInfo>) ois.readObject();
-            }
+            processor.parser.allTerms_Map =  (HashMap<String, TermInfo>) ois.readObject();
+
             ois.close();
             fis.close();
 
@@ -395,12 +395,8 @@ public class BI_Controller implements Initializable {
             toRead = new File(path + "/CountriesInfoMap");
             fis = new FileInputStream(toRead);
             ois = new ObjectInputStream(fis);
-            if (isReadFileInitialized) {
-                readFile.getProcessor().indexer.countryMap = (HashMap<String, CountryInfo>) ois.readObject();
-            }
-            else {
-                countryMap_COPY = (HashMap<String, CountryInfo>) ois.readObject();
-            }
+            processor.indexer.countryMap = (HashMap<String, CountryInfo>) ois.readObject();
+
             ois.close();
             fis.close();
 
@@ -408,15 +404,19 @@ public class BI_Controller implements Initializable {
             toRead = new File(path + "/DocsInfoMap");
             fis = new FileInputStream(toRead);
             ois = new ObjectInputStream(fis);
-            if (isReadFileInitialized) {
-                readFile.allDocs_Map = (HashMap<String, Document>) ois.readObject();
-            }
-            else {
-                allDocs_Map_COPY = (HashMap<String, Document>) ois.readObject();
-            }
+            processor.readFile.allDocs_Map = (HashMap<String, Document>) ois.readObject();
+
             ois.close();
             fis.close();
 
+            //read the languages set
+            toRead = new File(path + "/LanguagesSet");
+            fis = new FileInputStream(toRead);
+            ois = new ObjectInputStream(fis);
+            processor.readFile.setLanguagesSet((Set<String>) ois.readObject());
+
+            ois.close();
+            fis.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -425,8 +425,6 @@ public class BI_Controller implements Initializable {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
 
     //this function checks if the files of the maps are in the disk
@@ -437,4 +435,300 @@ public class BI_Controller implements Initializable {
         return f1.exists() && f2.exists() && f3.exists();
     }
 
+
+
+
+    //-------------------------------
+    //----------Part-----------------
+    //-----------B-------------------
+    //-------------------------------
+
+    // load path of queries files
+    public void browseQueries(ActionEvent event) {
+        try
+        {
+            FileChooser dc=new FileChooser();
+            dc.setInitialDirectory((new File("C:\\")));
+            File selectedFile=dc.showOpenDialog(null);
+            String s=selectedFile.getAbsolutePath();
+            tf_queriesFiles.setText(s);
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+    // this function will take care of one query case
+    public void simpleQuery(){
+        //if there is terms to work with:
+        if((processor != null)) {
+            String query = tf_freeQuery.getText();
+            if(!query.equals("")) {//if the query is not empty
+                processor.parser.setIsQuery(true);
+                processor.parser.queryTermsMap = new HashMap<>();//reset the map
+
+                String[] splittedQuery = query.split(" ");
+
+                // if user choose semantic, add result to query
+                if (cb_semantic.isSelected()) {
+                    String semantic = addSemanticWords(query);
+                    query = query + " " + semantic;
+                }
+
+                Searcher searcher = new Searcher(query,splittedQuery.length, processor, cb_stem.isSelected(),cb_semantic.isSelected(),getCheckedCountries());
+                ObservableList<String> items = FXCollections.observableArrayList();
+
+                // generate a random integer from 100 to 999
+                Random random = new Random();
+                int queryNum = random.nextInt(900) + 100;
+
+                items.add("Query number: " + queryNum);
+                items.add("num of docs : " + searcher.resultList.size());
+                for (Map.Entry<String, Float> s : searcher.resultList) {
+
+                    items.add(s.getKey());
+                }
+                ListView<String> list = new ListView<>();
+                list.setItems(items);
+
+
+                showResultsOnScreen(list);
+
+            }else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setContentText("You must write a query first!");
+                alert.showAndWait();
+            }
+        }else {//there is nothing to work with
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText("You must run the index first \n " +
+                    "Or load the memory from the disk!");
+            alert.showAndWait();
+        }
+    }
+    // this function will take care of many queries case
+    public void manyQueries() throws IOException {
+        if ((processor != null)) { // if processor is exists
+            processor.parser.setIsQuery(true);
+            processor.parser.queryTermsMap = new HashMap<>();//reset the map
+
+            long startTime = System.currentTimeMillis();
+            //path of file with queries
+            String path = tf_queriesFiles.getText();
+            if (path.length() > 0) { // if path is not empty
+                File f = new File(path);
+                if (f.exists()) { // if file is legal
+                    FileInputStream file = new FileInputStream(path);
+                    Map<String, String> queries = new TreeMap<>();
+                    Map<String,StringBuilder> desc = new TreeMap<>();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(file));
+
+                    String line = "";
+                    String numQuery = "";
+                    while ((line = br.readLine()) != null) {
+                        if (line.contains("<num>")) {
+                            numQuery = line.substring(line.indexOf(':') + 2);
+                            if (numQuery.charAt(numQuery.length()-1) == ' '){ // if last char in numQuery is " " remove it
+                                numQuery = numQuery.substring(0,numQuery.length()-1);
+                            }
+                            line = br.readLine();
+                            String query = line.substring(line.indexOf('>') + 2);
+                            queries.put(numQuery, query);
+                        }
+                        if (line.contains("<desc>")) {
+                            // while line is not empty and we didn't got to next flag
+                            StringBuilder descOfQuery = new StringBuilder();
+                            while (((line = br.readLine()).length() > 0) && (!(line.contains("<")))) {
+                                descOfQuery.append(line).append("\n");
+
+                            }
+                            desc.put(numQuery,descOfQuery);
+                        }
+
+                    }
+                    Searcher searcher;
+                    ObservableList<String> items = FXCollections.observableArrayList();
+                    for (String queryNum : queries.keySet()) {
+
+                        String query = queries.get(queryNum);
+                        String[] splittedQuery = query.split(" ");
+
+                        // if user choose semantic, add result to query
+                        if (cb_semantic.isSelected()) {
+                            String semantic = addSemanticWords(query);
+                            query = query + " " + semantic;
+                        }
+
+                        String description = desc.get(queryNum).toString();
+                        String[] descArr = description.split(" ");
+                        if ((descStopWords == null) || descStopWords.isEmpty()) { // if map of stop words (of desc) is empty, init it
+                            initDescStopWords();
+                        }
+
+                        // remove all stop words of desc
+                        String desWithoutStopWords = "";
+                        for (int i = 0 ; i < descArr.length ; i ++) {
+                            if (!(descStopWords.contains(descArr[i].toLowerCase()))){
+                                desWithoutStopWords += descArr[i] + " ";
+                            }
+                        }
+
+                        query = query + " " + desWithoutStopWords;
+
+                        query = query.replace("\n", "");
+
+                        searcher = new Searcher(query,splittedQuery.length, processor, cb_stem.isSelected(), true,getCheckedCountries());
+                        items.add("Query number: " + queryNum);
+                        items.add("num of docs: " + searcher.resultList.size());
+
+                        for (Map.Entry<String, Float> s : searcher.resultList) {
+                            items.add(s.getKey());
+                        }
+                        items.add("---------New Query---------");
+                    }
+
+                    long endTime = System.currentTimeMillis();
+                    long totalTime = (endTime - startTime) / 1000;
+                    items.add("rum time in seconds:" + totalTime);
+
+                    ListView<String> list = new ListView<>();
+                    list.setItems(items);
+
+                    showResultsOnScreen(list);
+
+                    // close files
+                    file.close();
+                    br.close();
+
+                }
+                else { // if file is not legal
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setContentText("Chosen file is illegal");
+                    alert.showAndWait();
+                }
+            }
+            else { // if path is empty
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setContentText("You must insert the path of queries.txt file !");
+                alert.showAndWait();
+            }
+
+        }else {//if there is no memory or inverted index loaded:
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText("You must run the index first \n " +
+                    "Or load the memory from the disk!");
+            alert.showAndWait();
+        }
+
+
+    }
+    // init stop words (of description) list
+    private void initDescStopWords() {
+        descStopWords = new HashSet<>();
+        descStopWords.add("information");
+        descStopWords.add("available");
+        descStopWords.add("impact");
+        descStopWords.add("role");
+        descStopWords.add("identify");
+        descStopWords.add("instance");
+        descStopWords.add("instances");
+        descStopWords.add("documents");
+        descStopWords.add("document");
+        descStopWords.add("discuss");
+        descStopWords.add("background");
+        descStopWords.add("current");
+        descStopWords.add("i.e.");
+        descStopWords.add("something");
+        descStopWords.add("effective");
+        descStopWords.add("only");
+        descStopWords.add("other");
+        descStopWords.add("use");
+        descStopWords.add("associated");
+        descStopWords.add("associate");
+        descStopWords.add("what");
+        descStopWords.add("is");
+        descStopWords.add("on");
+        descStopWords.add("the");
+        descStopWords.add("if");
+        descStopWords.add("a");
+        descStopWords.add("when");
+
+
+
+
+    }
+    // this function will open new scene and will show there the results of the query
+    public void showResultsOnScreen(ListView<String> resultList) {
+        try {
+            //openning new Stage to show in
+            Stage stage = new Stage();
+            stage.setTitle("Your Results");
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            Parent root = fxmlLoader.load(getClass().getResource("/View/Results.fxml").openStream());
+            root.setStyle("-fx-background-color: white");
+
+            Scene scene = new Scene(root, 550, 400);
+            stage.setScene(scene);
+
+            stage.setOnCloseRequest(e -> {
+                e.consume();
+                stage.close();
+            });
+
+            //loading the controllers of the new stage:
+            resultsController = fxmlLoader.getController();
+            //((Model)model).addObserver(updateController);
+
+            //updateController.setModel(model);
+            resultsController.setProcessor(processor);
+            resultsController.setResultList(resultList);
+
+
+            stage.initModality(Modality.APPLICATION_MODAL); //Lock the window until it closes
+
+            resultsController.setResultsOnScreen();
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // set the countries inside the combo box in the GUI
+    public void setCountries() {
+        mb_cities.setDisable(false);
+        Set<String> allCities = processor.indexer.countryMap.keySet();
+        for (String city : allCities) {
+            CheckMenuItem menuItem = new CheckMenuItem(city);
+            mb_cities.getItems().add(menuItem);
+        }
+    }
+    // get the countries that checked in the GUI
+    public Set<String> getCheckedCountries() {
+        Set<String> ans = new HashSet<>();
+        for (MenuItem item : mb_cities.getItems()){
+            CheckMenuItem tmp = (CheckMenuItem) item;
+            if (tmp.isSelected()){
+                ans.add(tmp.getText());
+            }
+        }
+        return ans;
+    }
+    // this function will return all results from semantic object
+    private String addSemanticWords(String query) {
+        String ans = "";
+        String[] arr = query.split(" ");
+        for (int i = 0 ; i < arr.length ; i ++) {
+            Semantic sem = new Semantic(arr[i]);
+            HashSet<String> set = sem.runSemantic(3);
+            Iterator it = set.iterator();
+            while (it.hasNext()) {
+                ans += it.next()+ " ";
+            }
+        }
+        return ans;
+    }
 }

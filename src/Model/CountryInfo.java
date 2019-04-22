@@ -8,10 +8,11 @@ public class CountryInfo implements Serializable{
     private String corrency; // currency used in country
     private String population; // num of pop in country
     int df; // document freq
-    double idf; // idf
+    private double idf; // idf
     int lineInPosting; // location of the term in posting file
     int lengthInFile; // length in bytes of the line in posting file
     int sumTf; // sum term freq in all Corpus
+
     // C'tor
     public CountryInfo(String country_name, String population,String corrency,int numOfDocs, int sumTf) {
         this.country_name = country_name;
@@ -59,6 +60,14 @@ public class CountryInfo implements Serializable{
         this.lengthInFile = lengthInFile;
     }
 
+    public int getLineInPosting() {
+        return lineInPosting;
+    }
+
+    public int getLengthInFile() {
+        return lengthInFile;
+    }
+
     public String getCountry_name() {
         return country_name;
     }
@@ -69,5 +78,13 @@ public class CountryInfo implements Serializable{
 
     public String getCorrency() {
         return corrency;
+    }
+
+    public double getIdf() {
+        return idf;
+    }
+
+    public void setIdf(double idf) {
+        this.idf = idf;
     }
 }

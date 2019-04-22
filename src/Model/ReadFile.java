@@ -17,12 +17,21 @@ public class ReadFile {
     public Map<String, String> docsForIteration; //this map is for one iteration <docName, text>
     private int numOfFiles; //count the number of files, we iterate every 185 files
     private Set<String> languagesOfDocs; // a set of the languages in the docs
-    private int totalNumOfDocs; // number of total docs in corpus
+    private int totalNumOfFiles; // number of total docs in corpus
 
 
     //C'tor
-    public ReadFile(String mainPath, String savingPath, boolean doStemming) {
-        this.processor = new Processor(this,mainPath,savingPath,doStemming);
+    public ReadFile(Processor processor,String mainPath, String savingPath) {
+        this.processor = processor;
+        this.numOfDocs = 0;
+        this.numOfFiles = 0;
+        this.mainPath = mainPath;
+        this.savingPath = savingPath;
+        this.allDocs_Map = new HashMap<>();
+    }
+    //C'tor
+    public ReadFile(Processor processor,String mainPath, String savingPath, boolean doStemming) {
+        this.processor = processor;
         this.doStemming = doStemming;
         this.numOfDocs = 0;
         this.numOfFiles = 0;
@@ -37,16 +46,16 @@ public class ReadFile {
         File mainPathDir = new File(mainPath + "\\corpus");
         String[] listOfDirs = mainPathDir.list();
 
-        totalNumOfDocs = listOfDirs.length;
+        totalNumOfFiles = listOfDirs.length;
         //for each file add the docs to the map
-        for (int i = 0; i < totalNumOfDocs; i++) {
+        for (int i = 0; i < totalNumOfFiles; i++) {
             String currFilePath = mainPath + "\\corpus\\" + listOfDirs[i] + "\\" + listOfDirs[i];
             readOneFile_addToMap(currFilePath); //cut each doc in the file and make Document object from it
             numOfFiles++;
 
             //if we finished this iteration round OR this is the last file
             if((numOfFiles == 185) || (i + 1 == listOfDirs.length)){
-                //processor.parser.termFrequency = new HashMap<>();
+                processor.parser.termFrequency = new HashMap<>();
                 processor.Parse();
                 numOfFiles = 0;
                 docsForIteration = new HashMap<>(); //reset the docs for this iteration
@@ -151,13 +160,19 @@ public class ReadFile {
         return line;
     }
     // getter
+    public int getTotalNumOfFiles() {
+        return totalNumOfFiles;
+    }
+    // getter
     public int getTotalNumOfDocs() {
-        return totalNumOfDocs;
+        return numOfDocs;
     }
     // getter
     public Set<String> getLanguagesSet() {
         return languagesOfDocs;
     }
+    //setter
+    public void setLanguagesSet(Set<String> languagesOfDocs){this.languagesOfDocs = languagesOfDocs;}
     // getter
     public Processor getProcessor() {
         return processor;

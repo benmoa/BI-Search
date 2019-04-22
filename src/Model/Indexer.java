@@ -13,7 +13,7 @@ import java.util.*;
 public class Indexer {
 
     private Processor processor; // pointer to Processor object
-    private String mainPath;  // holding path of corpus
+    public String mainPath;  // holding path of corpus
     private String savingPath; // holding path of saving dir
     public File tempPostingsForTerms; //dictionary for terms
     public File tempPostingsForCountry; //dictionary for terms
@@ -22,6 +22,12 @@ public class Indexer {
     public Map<String,CountryInfo> countryMap; //map of countries and df <countryName, CountryInfo>
     private Map<String,String[]> earthCountries; // all countries in earth <capitalCity,[country,population,currency]>
 
+
+    // C'tor
+    public Indexer(Processor processor,String mainPath){
+        this.processor = processor;
+        this.mainPath = mainPath;
+    }
     // C'tor
     public Indexer(Processor processor,String mainPath, String savingPath){
         this.processor = processor;
@@ -209,29 +215,51 @@ public class Indexer {
         openPostingFiles(forWhat);
 
         File[] tempPosting1= pathOfTemp.listFiles();
-        int amountOfTmp = pathOfTemp.listFiles().length;
 
-        while (amountOfTmp > 2) {
-            MergeTwoFiles(tempPosting1[0], tempPosting1[1],pathOfTemp,forWhat);
-            tempPosting1= pathOfTemp.listFiles();
-            amountOfTmp =  tempPosting1.length;
-        }
+        //if there is some thing to index
+        if(tempPosting1 != null) {
+            int amountOfTmp = pathOfTemp.listFiles().length;
+
+            while (amountOfTmp > 2) {
+                MergeTwoFiles(tempPosting1[0], tempPosting1[1], pathOfTemp, forWhat);
+                tempPosting1 = pathOfTemp.listFiles();
+                amountOfTmp = tempPosting1.length;
+            }
+
+            //if there is just one file to merge
+            if (tempPosting1.length == 1) {
+                File emptyFile = new File(pathOfTemp.getPath() + "\\empty.txt");
+                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(emptyFile, true)));
+                out.write("");
+                out.close();
+                tempPosting1 = pathOfTemp.listFiles();
+            }
 
 
-        if(forWhat.equals("Terms")) {
             //merge the last two posting files of terms
-            FinalMergeToTerms(tempPosting1[0], tempPosting1[1]);
-            writeMapsToFile("TermsInfoMap");
-        }
-        else {
-            //merge the last two posting files of cuntries
-            FinalMergeToCountries(tempPosting1[0], tempPosting1[1]);
-            writeMapsToFile("CountriesInfoMap");
+            if (forWhat.equals("Terms")) {
+                if(tempPosting1.length != 0) {
+                    //if it's two files:
+                    FinalMergeToTerms(tempPosting1[0], tempPosting1[1]);
+                    //writeMapsToFile("TermsInfoMap");
+                }
+            } else {
+                if(tempPosting1.length != 0) {
+                    //merge the last two posting files of cuntries
+                    FinalMergeToCountries(tempPosting1[0], tempPosting1[1]);
+                    //writeMapsToFile("CountriesInfoMap");
+                }
+            }
         }
 
-        //delete the temp directories
-        tempPostingsForTerms.delete();
-        tempPostingsForCountry.delete();
+        //merge the last two posting files of terms
+        if (forWhat.equals("Terms")) {
+            writeMapsToFile("TermsInfoMap");
+            tempPostingsForTerms.delete();
+        } else {
+            writeMapsToFile("CountriesInfoMap");
+            tempPostingsForCountry.delete();
+        }
     }
 
     //merge two files into new one and delete the old ones
@@ -403,6 +431,8 @@ public class Indexer {
                 int lengthOfLine = line2.getBytes().length;
                 currTermInfo.setLengthInFile(lengthOfLine);//set the length of the curr term line in file
                 pointerToFile = pointerToFile + lengthOfLine + 2; //increase the pointer (+2 because we have \n)
+                currTermInfo.calculateIdf();
+                update_sumWeight(term2,line2);
 
                 line2 = br2.readLine();
             }
@@ -434,6 +464,7 @@ public class Indexer {
                 currTermInfo.setLengthInFile(lengthOfLine);//set the length of the curr term line in file
                 pointerToFile = pointerToFile + lengthOfLine + 2; //increase the pointer
                 currTermInfo.calculateIdf();
+                update_sumWeight(term1,line1);
 
                 line1 = br1.readLine();
             }
@@ -467,6 +498,7 @@ public class Indexer {
                 currTermInfo.setLengthInFile(lengthOfLine);//set the length of the curr term line in file
                 pointerToFile = pointerToFile + lengthOfLine + 2; //increase the pointer
                 currTermInfo.calculateIdf();
+                update_sumWeight(term1,bothLines);
 
                 line1 = br1.readLine();
                 line2 = br2.readLine();
@@ -505,6 +537,7 @@ public class Indexer {
             currTermInfo.setLengthInFile(lengthOfLine);//set the length of the curr term line in file
             pointerToFile = pointerToFile + lengthOfLine + 2; //increase the pointer
             currTermInfo.calculateIdf();
+            update_sumWeight(term1,line1);
 
             line1 = br1.readLine();
         }
@@ -540,6 +573,7 @@ public class Indexer {
             currTermInfo.setLengthInFile(lengthOfLine);//set the length of the curr term line in file
             pointerToFile = pointerToFile + lengthOfLine + 2; //increase the pointer
             currTermInfo.calculateIdf();
+            update_sumWeight(term2,line2);
 
             line2 = br2.readLine();
         }
@@ -708,6 +742,25 @@ public class Indexer {
         f2.delete();
     }
 
+
+    private void update_sumWeight(String term,String line) {
+        line = line.substring(line.indexOf(":") + 2);
+        String[] postingLine = line.split(",");
+        for(String currDoc:postingLine)
+        {
+            String[] docInfo = currDoc.split(" ");
+            String docName = docInfo[0];
+            Integer freq = Integer.parseInt(docInfo[1]);                            // frequency
+            Document currDocInfo = processor.readFile.allDocs_Map.get(docName);
+            double x = currDocInfo.getNumOfTerms();                                 // x = |D|
+            float y = processor.parser.allTerms_Map.get(term).getIdf();             // y = idf
+            float tfIdf = (float)(freq/x)*(y);                                      // tf*idf = (f/|D|) * idf
+            float newW = (float)tfIdf * tfIdf;                                      // (tf*idf)^2
+            currDocInfo.updateSumWeights(newW);
+        }
+    }
+
+
     //-------------------
     //-----Write Maps----
     //-------------------
@@ -736,6 +789,13 @@ public class Indexer {
 
         //write the map of docs to file:
         out.writeObject(processor.readFile.allDocs_Map);
+        out.close();
+
+        MapFile = new File(savingPath+"\\LanguagesSet");
+        out = new ObjectOutputStream(new FileOutputStream(MapFile));
+
+        //write the set of languages to file:
+        out.writeObject(processor.readFile.getLanguagesSet());
         out.close();
     }
 }

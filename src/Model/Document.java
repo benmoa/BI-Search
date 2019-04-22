@@ -19,6 +19,7 @@ public class Document implements Serializable{
     private int max_tf; // maximum freq in this doc
     private String mostFreqTerm; //the most frequency term in the doc
     private String placesOfMaxTF; //string of places of the max tf in this doc.. like: "-1!4!2..."
+    private float sumWeights; //sum of all (tf*idf)^2
 
     // C'tor
     public Document() {
@@ -138,5 +139,13 @@ public class Document implements Serializable{
 
     public String getPlacesOfMaxTF() {
         return placesOfMaxTF;
+    }
+
+    public float getSumWeights() {
+        return sumWeights;
+    }
+
+    public void updateSumWeights(float sumWeights) {
+        this.sumWeights += sumWeights;
     }
 }

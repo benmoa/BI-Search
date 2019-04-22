@@ -4,66 +4,99 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.BI_Controller">
+<VBox prefHeight="580.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.BI_Controller">
   <children>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <ImageView fx:id="img_logo" fitHeight="102.0" fitWidth="258.0" layoutX="199.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="img_logo" fitHeight="102.0" fitWidth="258.0" layoutX="297.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../Resources/logo.jpg" />
                </image>
             </ImageView>
             <TextField fx:id="tf_corpus" layoutX="35.0" layoutY="164.0" />
-            <TextField fx:id="tf_savingPath" layoutX="347.0" layoutY="164.0" />
+            <TextField fx:id="tf_savingPath" layoutX="35.0" layoutY="231.0" />
             <Button fx:id="btn_files" layoutX="210.0" layoutY="164.0" mnemonicParsing="false" onAction="#pathOfCorpus" prefHeight="25.0" prefWidth="87.0" text="Browse">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
-            <CheckBox fx:id="cb_stem" layoutX="490.0" layoutY="201.0" mnemonicParsing="false" text="Do Stem" />
-            <Button fx:id="btn_savingPath" layoutX="523.0" layoutY="164.0" mnemonicParsing="false" onAction="#savingPath" prefHeight="25.0" prefWidth="87.0" text="Browse">
+            <CheckBox fx:id="cb_stem" layoutX="220.0" layoutY="294.0" mnemonicParsing="false" text="Do Stem" />
+            <Button fx:id="btn_savingPath" layoutX="210.0" layoutY="231.0" mnemonicParsing="false" onAction="#savingPath" prefHeight="25.0" prefWidth="87.0" text="Browse">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
             <Text layoutX="29.0" layoutY="152.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Corpus and Stop-Words Path:" />
-            <Text layoutX="389.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saving Path:" />
-            <Button fx:id="btn_start" layoutX="392.0" layoutY="231.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="87.0" text="Let's go!">
+            <Text layoutX="75.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Saving Path:" />
+            <Button fx:id="btn_start" layoutX="64.0" layoutY="332.0" mnemonicParsing="false" onAction="#start" prefHeight="25.0" prefWidth="87.0" text="Let's go!">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
-            <Button fx:id="btn_showDictionary" layoutX="353.0" layoutY="351.0" mnemonicParsing="false" onAction="#viewDictionary" prefHeight="25.0" prefWidth="109.0" text="Show Dictionary">
+            <Button fx:id="btn_showDictionary" layoutX="186.0" layoutY="436.0" mnemonicParsing="false" onAction="#viewDictionary" prefHeight="25.0" prefWidth="109.0" text="Show Dictionary">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
-            <Button fx:id="btn_resetAll" layoutX="199.0" layoutY="351.0" mnemonicParsing="false" onAction="#reset" prefHeight="25.0" prefWidth="109.0" text="Reset All">
+            <Button fx:id="btn_resetAll" layoutX="119.0" layoutY="490.0" mnemonicParsing="false" onAction="#reset" prefHeight="25.0" prefWidth="109.0" text="Reset All">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
-            <TextField fx:id="tf_loadCache" layoutX="35.0" layoutY="311.0" />
-            <Text layoutX="45.0" layoutY="297.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Loading Cached Path:" />
-            <Button fx:id="btn_browseForCache" layoutX="210.0" layoutY="311.0" mnemonicParsing="false" onAction="#pathOfCache" prefHeight="25.0" prefWidth="87.0" text="Browse">
+            <TextField fx:id="tf_loadCache" layoutX="35.0" layoutY="393.0" />
+            <Text layoutX="50.0" layoutY="383.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Loading Cached Path:" />
+            <Button fx:id="btn_browseForCache" layoutX="210.0" layoutY="393.0" mnemonicParsing="false" onAction="#pathOfCache" prefHeight="25.0" prefWidth="87.0" text="Browse">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
-            <Button fx:id="btn_loadCache" layoutX="353.0" layoutY="311.0" mnemonicParsing="false" onAction="#LoadCache" prefHeight="25.0" prefWidth="109.0" text="Load Cache">
+            <Button fx:id="btn_loadCache" layoutX="53.0" layoutY="436.0" mnemonicParsing="false" onAction="#LoadCache" prefHeight="25.0" prefWidth="109.0" text="Load Cache">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </Button>
-            <ChoiceBox fx:id="cb_language" layoutX="185.0" layoutY="231.0" prefWidth="150.0" />
-            <Text layoutX="233.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Language:" />
+            <ChoiceBox fx:id="cb_language" layoutX="35.0" layoutY="290.0" prefWidth="150.0" />
+            <Text layoutX="80.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Language:" />
+            <Text layoutX="80.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Part A:">
+               <font>
+                  <Font name="Gill Sans MT" size="33.0" />
+               </font>
+            </Text>
+            <Text layoutX="563.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Part B:">
+               <font>
+                  <Font name="Gill Sans MT" size="33.0" />
+               </font>
+            </Text>
+            <Text layoutX="542.0" layoutY="152.0" strokeType="OUTSIDE" strokeWidth="0.0" text="What you're looking for?" />
+            <TextField fx:id="tf_freeQuery" layoutX="533.0" layoutY="164.0" />
+            <Button fx:id="btn_run" layoutX="692.0" layoutY="164.0" mnemonicParsing="false" onAction="#simpleQuery" prefHeight="25.0" prefWidth="87.0" text="Run">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
+            <Text layoutX="560.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Queries files path:" />
+            <TextField fx:id="tf_queriesFiles" layoutX="533.0" layoutY="231.0" />
+            <Button fx:id="btn_browseQueriesFiles" layoutX="692.0" layoutY="231.0" mnemonicParsing="false" onAction="#browseQueries" prefHeight="25.0" prefWidth="87.0" text="Browse">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
+            <Button fx:id="btn_runQueries" layoutX="586.0" layoutY="271.0" mnemonicParsing="false" onAction="#manyQueries" prefHeight="25.0" prefWidth="87.0" text="Run Queries">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
+            <CheckBox fx:id="cb_semantic" layoutX="567.0" layoutY="324.0" mnemonicParsing="false" text="Semantic treatment" />
+            <MenuButton fx:id="mb_cities" layoutX="569.0" layoutY="356.0" prefHeight="39.0" prefWidth="189.0" text="Cities Filter" />
          </children>
     </AnchorPane>
   </children>

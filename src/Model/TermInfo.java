@@ -3,18 +3,18 @@ package Model;
 import java.io.Serializable;
 
 public class TermInfo implements Comparable<TermInfo>,Serializable{
-    String term; // name of term
-    int df; // freq in doc
-    double idf; // idf
-    int lineInPosting; // location of the term in posting file
-    int lengthInFile; // length in bytes of the line in posting file
-    int sumTf; // sum term freq in all Corpus
+    private String term; // name of term
+    private int df; // freq in doc
+    private float idf; // idf
+    private int lineInPosting; // location of the term in posting file
+    private int lengthInFile; // length in bytes of the line in posting file
+    private int sumTf; // sum term freq in all Corpus
 
     // C'tor
     public TermInfo(String term, int df, int sumTf) {
         this.df = df;
         this.lineInPosting = -1;
-        idf=0;
+        idf = 0;
         this.term = term;
         this.sumTf = sumTf;
     }
@@ -61,10 +61,16 @@ public class TermInfo implements Comparable<TermInfo>,Serializable{
     public int getDf() {
         return df;
     }
+    // getter
+    public int getLineInPosting() {
+        return lineInPosting;
+    }
     // calc idf by using idf and df
     public void calculateIdf()
     {
-        idf=Math.log(468360/ df)/Math.log(2);
+        float up = (float)Math.log(468360/ df);
+        float log2 = (float)Math.log(2);
+        idf = up/log2;
     }
     // to string function
     public String toString()
@@ -72,4 +78,11 @@ public class TermInfo implements Comparable<TermInfo>,Serializable{
         return (term + " : " + df + " " + sumTf + " " + lineInPosting);
     }
 
+    public int getLengthInFile() {
+        return lengthInFile;
+    }
+
+    public float getIdf() {
+        return idf;
+    }
 }

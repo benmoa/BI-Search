@@ -33,7 +33,8 @@ public class StopWords {
         String line;
 
         while ((line = br.readLine()) != null) {
-            if((!line.equals("Between")) && (!line.equals("between")) && (!line.equals("BETWEEN")))
+            if((!line.equals("Between")) && (!line.equals("between")) && (!line.equals("BETWEEN"))
+                    && (!line.equals("MAY")) && (!line.equals("May")) && (!line.equals("may")))
                 stopWords_Set.add(line);
         }
     }

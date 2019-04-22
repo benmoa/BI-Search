@@ -27,7 +27,7 @@ public class Main extends Application{
         primaryStage.setResizable(false);
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent root = fxmlLoader.load(getClass().getResource("/View/BI_View.fxml"));
-        Scene scene = new Scene(root, 650, 450);
+        Scene scene = new Scene(root, 850, 510);
         primaryStage.setScene(scene);
         root.setStyle("-fx-background-color: white");
         primaryStage.show();

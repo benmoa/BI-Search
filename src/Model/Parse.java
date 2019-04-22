@@ -14,20 +14,37 @@ public class Parse {
     public Map<String, StringBuilder> linesToPosting; // <termName, term: docName freq,docName freq...>
     public Map<String,StringBuilder> lineToPosting_Countries; //lines to the posting file that contains <countryName,line_to_post> look like: "israel : doc1 4,doc92 5..."
     private String mainPath;  // holding path of corpus
-    private String savingPath; // holding path of saving dir
+    public String savingPath; // holding path of saving dir
     private boolean doStemming; // if to do stem
     private int placeInDoc; //is the index of term in the doc (the place of the term in the doc)
     private static int numOfTerms; // terms counter for each Doc
     private Map<String, Pair<Integer,String>> tfForDoc; // Map of Terms for only one Doc and their tf and places in doc <term,<tf,places_in_doc>>
     private Map<String,String> largeNumbers; //this map will save all the Billions, Millions etc...
+    private boolean isQuery; // boolean that check if the current string is query or it's text from doc
+    public Map<String, Integer> queryTermsMap; //map for all the query words
 
 
+    // C'tor
+    public Parse(Processor processor,String mainPath,String savingPath, boolean doStemming,boolean isQuery) {
+        this.processor = processor;
+        this.mainPath = mainPath;
+        this.savingPath = savingPath;
+        this.doStemming = doStemming;
+        this.isQuery = isQuery;
+        this.stopWords = new StopWords(mainPath);
+        this.allTerms_Map = new HashMap<>();
+        this.queryTermsMap = new HashMap<>();
+        initMonthes();
+        initDeleteList();
+        initLargeNumbers();
+    }
     // C'tor
     public Parse(Processor processor,String mainPath ,String savingPath, boolean doStemming) {
         this.processor = processor;
         this.mainPath = mainPath;
         this.savingPath = savingPath;
         this.doStemming = doStemming;
+        this.isQuery = false;
         this.stopWords = new StopWords(mainPath);
         this.termFrequency = new HashMap<>();
         this.linesToPosting = new HashMap<>();
@@ -205,7 +222,7 @@ public class Parse {
     }
     // checking if string is percent or percentage
     private boolean isPercent (String str){
-        return  str.equals("percent") || str.equals("percentage") ;
+        return  str.equals("percent") || str.equals("percentage") || str.equals("%");
     }
     // checking by using monthes map if string is name of month
     private boolean isDate (String str) {
@@ -262,7 +279,7 @@ public class Parse {
         }
     }
     // checking if string includes only capital letters
-    private boolean isAllCapitalInString (String str) {
+    public boolean isAllCapitalInString (String str) {
         for (int i=0 ; i < str.length() ; i++) {
             if (!(Character.isUpperCase(str.charAt(i))))
                 return false;
@@ -291,7 +308,17 @@ public class Parse {
     private String toCapitalLetters (String str) {return str.toUpperCase();}
     //checking if string includes in allTerm_map as key
     private boolean isTermExists (String str) {
-        return allTerms_Map.containsKey(str);
+        if (doStemming) { // if we need to do stem
+            Stemmer stemmer = new Stemmer();
+            stemmer.add(str.toCharArray(),str.length());
+            stemmer.stem();
+            str = stemmer.toString();
+        }
+
+        if(isQuery)//if it's query parse
+            return queryTermsMap.containsKey(str);
+        else
+            return allTerms_Map.containsKey(str);
     }
     // checking length of number
     private int checkSizeOfNum (String str) {
@@ -322,18 +349,20 @@ public class Parse {
     }
     // this function will check if current token and nexts tokens is about date
     private void handleDate(String currToken, String[] textOfDoc, int tokenIndex, int sizeOfDoc,String docName) {
-        if ((tokenIndex + 1 < sizeOfDoc) && isNumber(textOfDoc[tokenIndex + 1])) { // if the first value is MONTH and the sec is NUMBER
+        if ((tokenIndex + 1 < sizeOfDoc) && isNumber(removeUnnecessaryChars(textOfDoc[tokenIndex + 1]))) { // if the first value is MONTH and the sec is NUMBER
+
+            String nextToken = removeUnnecessaryChars(textOfDoc[tokenIndex + 1]);
 
             // if the token is day
-            if ((tokenIndex + 1 < sizeOfDoc) && stringToInt(textOfDoc[tokenIndex + 1]) >= 1 && stringToInt(textOfDoc[tokenIndex + 1]) <= 31){
-                updateTermFreq(monthes.get(currToken) + "-" + textOfDoc[tokenIndex + 1]);
+            if (stringToInt(nextToken) >= 1 && stringToInt(nextToken) <= 31){
+                updateTermFreq(monthes.get(currToken) + "-" + nextToken);
             }
             // if the token is 31 to 100 ---> 1931 to 2000
-            else if ((tokenIndex + 1 < sizeOfDoc) && stringToInt(textOfDoc[tokenIndex + 1]) > 31 && stringToInt(textOfDoc[tokenIndex + 1]) < 100){
-                updateTermFreq("19" + textOfDoc[tokenIndex + 1] + "-" + monthes.get(currToken));
+            else if (stringToInt(nextToken) > 31 && stringToInt(nextToken) < 100){
+                updateTermFreq("19" + nextToken + "-" + monthes.get(currToken));
             }
             else if ((tokenIndex + 1 < sizeOfDoc)) { // if token over 100
-                updateTermFreq(textOfDoc[tokenIndex + 1] + "-" + monthes.get(currToken));
+                updateTermFreq(nextToken + "-" + monthes.get(currToken));
             }
             else {
                 updateTermFreq(currToken);
@@ -355,24 +384,26 @@ public class Parse {
                 && (!(currToken.equals("--"))) && (!(currToken.charAt(0) == '<'))
                 && (!(currToken.charAt(currToken.length()-1) == '>')));
     }
-    //this function will get Document and parse it
-    public void ParseThisDoc(String documentText, String docName, String docFileName){
 
-        // reset numOfTerms,tfForDoc and tokenIndex to empty and get ready to new Document
-        numOfTerms = 0;
-        tfForDoc = new HashMap<>();
-        int tokenIndex = 0;
-        placeInDoc = 0;
+    //this function will get Document or query and parse it
+    public void ParseThisDoc(String documentText, String docName, String docFileName,boolean isSplittedToken){
+        // if we parse from readfile AND it's not a splitted token
+        if (!isQuery && !isSplittedToken) {
+            // reset numOfTerms,tfForDoc and tokenIndex to empty and get ready to new Document
+            numOfTerms = 0;
+            tfForDoc = new HashMap<>();
 
+            placeInDoc = 0;
+        }
         String currToken = "";
-
+        int tokenIndex = 0;
         //this line makes token from current doc
-        String[] textOfDoc = getTokensFromText(documentText);
-        int sizeOfDoc = textOfDoc.length;
+        String[] textToParse = getTokensFromText(documentText);
+        int lengthOfText = textToParse.length;
 
         //while there are more tokens
-        while (tokenIndex < sizeOfDoc){
-            currToken = textOfDoc[tokenIndex];
+        while (tokenIndex < lengthOfText){
+            currToken = textToParse[tokenIndex];
             if (isLegalToken(currToken)){ //check if the token is OK for parse
                 currToken = removeUnnecessaryChars(currToken);
 
@@ -381,11 +412,24 @@ public class Parse {
                     continue;
                 }
 
+
+                String[] miniTokens;
+                //if there is token like: british/irish => do it: 1) british  2) irish
+                if(contains_Slash(currToken)) {
+                    miniTokens = currToken.split("/");
+                    for (String token:miniTokens)
+                        ParseThisDoc(token,docName,docFileName,true); //run each token in the parse
+                    //continue to next token
+                    tokenIndex++;
+                    continue;
+                }
+
+
                 //System.out.println(currToken);
 
                 if (isAlpha(currToken)) { // if currrToken includes only letters
                     if (isDate(currToken)) { // if its date case
-                        handleDate(currToken,textOfDoc,tokenIndex,sizeOfDoc,docName);
+                        handleDate(currToken,textToParse,tokenIndex,lengthOfText,docName);
                         tokenIndex += 2;
                         continue;
                     }
@@ -404,6 +448,12 @@ public class Parse {
                                 currToken = currToken.toLowerCase(); //change it to lower case
                             }
                             else{
+                                if (doStemming) { // if we need to do stem
+                                    Stemmer stemmer = new Stemmer();
+                                    stemmer.add(currToken.toCharArray(),currToken.length());
+                                    stemmer.stem();
+                                    currToken = stemmer.toString();
+                                }
                                 currToken = currToken.toUpperCase(); //change it to upper case
                             }
                             updateTermFreq(currToken);
@@ -413,18 +463,25 @@ public class Parse {
                     }
                     //term is not with upper case in the first char
                     // if term exists on map (with capital letters), replace it with small letters
-                    else if (isTermExists(toCapitalLetters(currToken))){
-                        updateLowerUpperCases(currToken);
+                    else if (isTermExistsWithCapital(currToken.toLowerCase())){
+                        currToken = currToken.toLowerCase();
+                        if (doStemming) { // if we need to do stem
+                            Stemmer stemmer = new Stemmer();
+                            stemmer.add(currToken.toCharArray(),currToken.length());
+                            stemmer.stem();
+                            currToken = stemmer.toString();
+                        }
+                        updateLowerUpperCases(currToken.toUpperCase());
                         tokenIndex++;
                         continue;
                     }
                     // between case. for example : between 4 and 20
                     if (currToken.equals("between")){
-                        if ((tokenIndex + 3 < sizeOfDoc) && (isNumeric(textOfDoc [tokenIndex + 1]))
-                                && (textOfDoc [tokenIndex + 2].equals("and")) &&
-                                (isNumeric(textOfDoc [tokenIndex + 3]))) {
-                            updateTermFreq(currToken + " " + textOfDoc [tokenIndex + 1] +
-                                    " and " + textOfDoc [tokenIndex + 3]);
+                        if ((tokenIndex + 3 < lengthOfText) && (isNumeric(textToParse [tokenIndex + 1]))
+                                && (textToParse [tokenIndex + 2].equals("and")) &&
+                                (isNumeric(textToParse [tokenIndex + 3]))) {
+                            updateTermFreq(currToken + " " + textToParse [tokenIndex + 1] +
+                                    " and " + textToParse [tokenIndex + 3]);
                             tokenIndex += 4;
                             continue;
                         }
@@ -458,7 +515,7 @@ public class Parse {
                         }
                         if (stringToDouble(removeCommaFromString(currToken)) < 1000000) { // if num is under 1 million
                             // check if its not Dollars case
-                            if (!(isNextTokensDollars(textOfDoc,tokenIndex,sizeOfDoc))){
+                            if (!(isNextTokensDollars(textToParse,tokenIndex,lengthOfText))){
                                 if ((stringToDouble(removeCommaFromString(currToken)) > 1000)){// NUM K case
                                     double number = stringToDouble(removeCommaFromString(currToken));
                                     updateTermFreq(number / 1000 + "K");
@@ -467,27 +524,27 @@ public class Parse {
                                 }
 
                                 // Thousands / Million / Billion / Trillion  case
-                                if ((tokenIndex + 1 < sizeOfDoc) && (largeNumbers.containsKey(textOfDoc[tokenIndex + 1])) ){
+                                if ((tokenIndex + 1 < lengthOfText) && (largeNumbers.containsKey(textToParse[tokenIndex + 1])) ){
                                     //updateTermFreq(currToken + "K");
-                                    updateTermFreq(currToken + largeNumbers.get(textOfDoc[tokenIndex + 1]));
+                                    updateTermFreq(currToken + largeNumbers.get(textToParse[tokenIndex + 1]));
                                     tokenIndex +=2;
                                     continue;
                                 }
 
                                 // two numbers in a row, example : 55 3/4
-                                if ((tokenIndex + 1 < sizeOfDoc) && (isNumeric(textOfDoc [tokenIndex + 1]))) {
-                                    updateTermFreq(currToken + " " + textOfDoc [tokenIndex + 1]);
+                                if ((tokenIndex + 1 < lengthOfText) && (isNumeric(textToParse[tokenIndex + 1])) && ((textToParse[tokenIndex + 1]).contains("/"))) {
+                                    updateTermFreq(currToken + " " + textToParse [tokenIndex + 1]);
                                     tokenIndex +=2;
                                     continue;
                                 }
-                                if ((tokenIndex + 1 < sizeOfDoc) && isPercent(textOfDoc[tokenIndex + 1])) {// if its percent case
+                                if ((tokenIndex + 1 < lengthOfText) && isPercent(textToParse[tokenIndex + 1])) {// if its percent case
                                     updateTermFreq(currToken + "%");
                                     tokenIndex += 2;
                                     continue;
                                 }
 
-                                if ((tokenIndex + 1 < sizeOfDoc) && isDate(textOfDoc[tokenIndex + 1])) { // if its date (MM-DD) case --> 14 MAY to 05-14
-                                    handleDate(currToken, textOfDoc, tokenIndex, sizeOfDoc, docName);
+                                if ((tokenIndex + 1 < lengthOfText) && isDate(textToParse[tokenIndex + 1])) { // if its date (MM-DD) case --> 14 MAY to 05-14
+                                    handleDate(currToken, textToParse, tokenIndex, lengthOfText, docName);
                                     tokenIndex += 2;
                                     continue;
                                 }
@@ -498,24 +555,24 @@ public class Parse {
                             }
 
                             // case like 70 Dollars
-                            if ((tokenIndex + 1 < sizeOfDoc) && textOfDoc[tokenIndex + 1].equals("Dollars")) {
+                            if ((tokenIndex + 1 < lengthOfText) && textToParse[tokenIndex + 1].equals("Dollars")) {
                                 updateTermFreq(currToken + " Dollars");
                                 tokenIndex += 2;
                                 continue;
                             }
                             // case like 500 3/4 Dollars
-                            else if ((tokenIndex + 2 < sizeOfDoc) && (isNumeric(textOfDoc[tokenIndex + 1])) && textOfDoc[tokenIndex + 2].equals("Dollars")) {
-                                updateTermFreq(currToken + " " + textOfDoc[tokenIndex + 1] + " Dollars");
+                            else if ((tokenIndex + 2 < lengthOfText) && (isNumeric(textToParse[tokenIndex + 1])) && textToParse[tokenIndex + 2].equals("Dollars")) {
+                                updateTermFreq(currToken + " " + textToParse[tokenIndex + 1] + " Dollars");
                                 tokenIndex += 3;
                                 continue;
                             }
                             // case like 100 million or 100 billion or 100 trillion
-                            else if ((isNextTokensDollars(textOfDoc, tokenIndex + 1, sizeOfDoc)) &&
-                                    (tokenIndex + 1 < sizeOfDoc) && isMilOrBilOrTril(textOfDoc[tokenIndex + 1])) {
+                            else if ((isNextTokensDollars(textToParse, tokenIndex + 1, lengthOfText)) &&
+                                    (tokenIndex + 1 < lengthOfText) && isMilOrBilOrTril(textToParse[tokenIndex + 1])) {
                                 // 100 million (with or without U.S.) case
-                                if (textOfDoc[tokenIndex + 1].equals("million") || textOfDoc[tokenIndex + 1].equals("m")) {
+                                if (textToParse[tokenIndex + 1].equals("million") || textToParse[tokenIndex + 1].equals("m")) {
                                     // 10 million us dollars case
-                                    if ((tokenIndex + 2 < sizeOfDoc) && (textOfDoc[tokenIndex + 2].equals("U.S."))) {
+                                    if ((tokenIndex + 2 < lengthOfText) && (textToParse[tokenIndex + 2].equals("U.S."))) {
                                         updateTermFreq(currToken + " M Dollars");
                                         tokenIndex += 4;
                                         continue;
@@ -526,9 +583,9 @@ public class Parse {
                                     }
                                 }
                                 // 100 billion (with or without U.S.) case
-                                else if ((textOfDoc[tokenIndex + 1].equals("billion") || textOfDoc[tokenIndex + 1].equals("bn"))) {
+                                else if ((textToParse[tokenIndex + 1].equals("billion") || textToParse[tokenIndex + 1].equals("bn"))) {
                                     // 10 billion us dollars case
-                                    if ((tokenIndex + 2 < sizeOfDoc) && (textOfDoc[tokenIndex + 2].equals("U.S."))) {
+                                    if ((tokenIndex + 2 < lengthOfText) && (textToParse[tokenIndex + 2].equals("U.S."))) {
                                         updateTermFreq(currToken + "0000 M Dollars");
                                         tokenIndex += 4;
                                         continue;
@@ -539,9 +596,9 @@ public class Parse {
                                     }
                                 }
                                 /// 2 trillion (with or without U.S.) case
-                                else if (textOfDoc[tokenIndex + 1].equals("trillion")) {
+                                else if (textToParse[tokenIndex + 1].equals("trillion")) {
                                     // 10 trillion us dollars case
-                                    if ((tokenIndex + 2 < sizeOfDoc) && (textOfDoc[tokenIndex + 2].equals("U.S."))) {
+                                    if ((tokenIndex + 2 < lengthOfText) && (textToParse[tokenIndex + 2].equals("U.S."))) {
                                         updateTermFreq(currToken + "000000 M Dollars");
                                         tokenIndex += 4;
                                         continue;
@@ -555,14 +612,14 @@ public class Parse {
                             // if number is between 1M to 1B
                         } else if((checkSizeOfNum(currToken) > 6) && ((checkSizeOfNum(currToken) < 10))){
                             //normal case, for example : 10,000,000 to 10M
-                            if (!(isNextTokensDollars(textOfDoc,tokenIndex,sizeOfDoc))) {
+                            if (!(isNextTokensDollars(textToParse,tokenIndex,lengthOfText))) {
                                 float largeNum = stringToFloat(currToken);
                                 updateTermFreq(largeNum / 1000000 + "M");
                                 tokenIndex++;
                                 continue;
                             }
                             //dollar case
-                            if ((tokenIndex + 1 < sizeOfDoc) && textOfDoc[tokenIndex + 1].equals("Dollars")) {
+                            if ((tokenIndex + 1 < lengthOfText) && textToParse[tokenIndex + 1].equals("Dollars")) {
                                 float largerNum = stringToFloat(currToken);
                                 updateTermFreq(largerNum / 1000000 + " M Dollars");
                                 tokenIndex += 2;
@@ -571,7 +628,7 @@ public class Parse {
                         }
                         // over Billion case
                         else if (checkSizeOfNum(currToken) > 10) {
-                            if (!(isNextTokensDollars(textOfDoc,tokenIndex,sizeOfDoc))) {
+                            if (!(isNextTokensDollars(textToParse,tokenIndex,lengthOfText))) {
                                 currToken = removeCommaFromString(currToken);
                                 if((currToken.length() > 9) && (!currToken.equals(""))){//can not convert the num, do it manually
                                     String leftSide = currToken.substring(0,currToken.length() - 9);
@@ -597,9 +654,9 @@ public class Parse {
 
                     }
                     else if (hasTypeOfDate(currToken)){ // 4th of july case
-                        if (((tokenIndex + 2 < sizeOfDoc)) && (textOfDoc[tokenIndex + 1].equals("of"))
-                                && (isDate(textOfDoc[tokenIndex + 2]))) { // checking that the next tokens is " of MONTH "
-                            updateTermFreq(monthes.get(textOfDoc[tokenIndex + 2]) + "-" + currToken.substring(0,currToken.length()-2));
+                        if (((tokenIndex + 2 < lengthOfText)) && (textToParse[tokenIndex + 1].equals("of"))
+                                && (isDate(textToParse[tokenIndex + 2]))) { // checking that the next tokens is " of MONTH "
+                            updateTermFreq(monthes.get(textToParse[tokenIndex + 2]) + "-" + currToken.substring(0,currToken.length()-2));
                             tokenIndex += 3;
                             continue;
                         }
@@ -609,16 +666,16 @@ public class Parse {
                 else if (currToken.charAt(0) == '$') { // if the first char is $ ---> like $50
                     // if the amount is under 1 million
                     if (stringToDouble(removeCommaFromString(currToken.substring(1,currToken.length()))) < 1000000) {
-                        if (tokenIndex + 1 < sizeOfDoc) {
-                            if (!(isMilOrBilOrTril(textOfDoc[tokenIndex + 1]))) { // if the next token is not mill / bill / trill
+                        if (tokenIndex + 1 < lengthOfText) {
+                            if (!(isMilOrBilOrTril(textToParse[tokenIndex + 1]))) { // if the next token is not mill / bill / trill
                                 updateTermFreq(currToken.substring(1,currToken.length()) + " Dollars");
                                 tokenIndex += 1;
                                 continue;
 
                                 /// $100 million
-                            } else if (textOfDoc[tokenIndex + 1].equals("million") ||textOfDoc[tokenIndex + 1].equals("m")){
+                            } else if (textToParse[tokenIndex + 1].equals("million") ||textToParse[tokenIndex + 1].equals("m")){
                                 ////// if the next token is U.S. , ignore it and add 1 to tokenIndex
-                                if (tokenIndex + 2 < sizeOfDoc && textOfDoc[tokenIndex + 2].equals("U.S.")) {
+                                if (tokenIndex + 2 < lengthOfText && textToParse[tokenIndex + 2].equals("U.S.")) {
                                     updateTermFreq(currToken.substring(1,currToken.length()) + " M Dollars");
                                     tokenIndex += 4;
                                     continue;
@@ -630,9 +687,9 @@ public class Parse {
                                 }
 
                                 /// $100 billion
-                            } else if (textOfDoc[tokenIndex + 1].equals("billion") ||textOfDoc[tokenIndex + 1].equals("bn")){
+                            } else if (textToParse[tokenIndex + 1].equals("billion") ||textToParse[tokenIndex + 1].equals("bn")){
                                 ////// if the next token is U.S. , ignore it and add 1 to tokenIndex
-                                if (tokenIndex + 2 < sizeOfDoc && textOfDoc[tokenIndex + 2].equals("U.S.")) {
+                                if (tokenIndex + 2 < lengthOfText && textToParse[tokenIndex + 2].equals("U.S.")) {
                                     long largeNum = stringToLong(currToken.substring(1, currToken.length())) * 1000;
                                     updateTermFreq(largeNum + " M Dollars");
                                     tokenIndex += 4;
@@ -646,9 +703,9 @@ public class Parse {
                                 }
                             }
                             // $7 trillion
-                            else if (textOfDoc[tokenIndex + 1].equals("trillion")) {
+                            else if (textToParse[tokenIndex + 1].equals("trillion")) {
                                 ////// if the next token is U.S. , ignore it and add 1 to tokenIndex
-                                if (tokenIndex + 2 < sizeOfDoc && textOfDoc[tokenIndex + 2].equals("U.S.")) {
+                                if (tokenIndex + 2 < lengthOfText && textToParse[tokenIndex + 2].equals("U.S.")) {
                                     float largeNum = stringToFloat(currToken.substring(1, currToken.length())) * 1000000;
                                     updateTermFreq(largeNum + " M Dollars");
                                     tokenIndex += 4;
@@ -685,94 +742,130 @@ public class Parse {
         } // end of while
 
 
+        // if we parse from readfile AND not finished with the tokens
+        if (!isQuery && !isSplittedToken) {
 
-        Map.Entry<String, Pair<Integer,String>> maxEntry = null;
+            Map.Entry<String, Pair<Integer, String>> maxEntry = null;
 
-        //will check the max tf just if there are terms for this doc.
-        if(tfForDoc.size() > 0) {
-            //this loop is checking the <MaxF,MaxT> in tfForDoc Map
-            for (Map.Entry<String, Pair<Integer,String>> entry : tfForDoc.entrySet()) {
-                if ((maxEntry == null) || (entry.getValue().getKey() > maxEntry.getValue().getKey())) {
-                    maxEntry = entry;
+            //will check the max tf just if there are terms for this doc.
+            if (tfForDoc.size() > 0) {
+                //this loop is checking the <MaxF,MaxT> in tfForDoc Map
+                for (Map.Entry<String, Pair<Integer, String>> entry : tfForDoc.entrySet()) {
+                    if ((maxEntry == null) || (entry.getValue().getKey() > maxEntry.getValue().getKey())) {
+                        maxEntry = entry;
+                    }
                 }
+
+                //adding cuurent Document info to allMapDoc
+                Document currDoc = processor.readFile.allDocs_Map.get(docName);
+
+                currDoc.setMax_tf(maxEntry.getValue().getKey());
+                currDoc.setMostFreqTerm(maxEntry.getKey());
+                currDoc.setPlacesOfMaxTF(maxEntry.getValue().getValue());
+                currDoc.setNumOfTerms(numOfTerms);
+
+            } else {//if there is no term for this doc, delete this doc we don't need it
+                processor.readFile.allDocs_Map.remove(docName);
+                processor.readFile.docsForIteration.remove(docName);
             }
 
-            //adding cuurent Document info to allMapDoc
-            Document currDoc = processor.readFile.allDocs_Map.get(docName);
-            currDoc.setMax_tf(maxEntry.getValue().getKey());
-            currDoc.setMostFreqTerm(maxEntry.getKey());
-            currDoc.setPlacesOfMaxTF(maxEntry.getValue().getValue());
-            currDoc.setNumOfTerms(numOfTerms);
 
-        }
-        else {//if there is no term for this doc, delete this doc we don't need it
-            processor.readFile.allDocs_Map.remove(docName);
-            processor.readFile.docsForIteration.remove(docName);
-        }
+            //--------------------
+            //-------Terms--------
+            //--add to posting----
+            //--------------------
 
-
-
-        //--------------------
-        //-------Terms--------
-        //--add to posting----
-        //--------------------
-
-        Pair<Integer,String> tfAndPlaces;
-        //adding the doc and term to the lines to posting MAP
-        for (String termInDoc : tfForDoc.keySet()) {
-            tfAndPlaces = tfForDoc.get(termInDoc);
-            if (linesToPosting.containsKey(termInDoc))//if there is entry to this term, add the doc to the posting line of this term
-                //term : doc1 3 6!205!544,doc2 1 6,doc19 2...
-                linesToPosting.replace(termInDoc,linesToPosting.get(termInDoc).append("," + docName + " " + tfAndPlaces.getKey() + " " + tfAndPlaces.getValue()));
-            else
-                linesToPosting.put(termInDoc, new StringBuilder(docName + " " + tfAndPlaces.getKey() + " " + tfAndPlaces.getValue()));
-        }
-
-
-        //------------------------
-        //-------Countries--------
-        //-----add to posting-----
-        //------------------------
-        //taking the country name of this doc
-        Document docToPosting = processor.readFile.allDocs_Map.get(docName);
-        tfAndPlaces = null;
-        //check if the doc wasn't removed from the map
-        if(docToPosting != null) {
-            String countryForThisDoc = ParseCountryForDoc(docToPosting.getCountry());
-
-            if((!countryForThisDoc.equals("")) && (!countryForThisDoc.equals(" "))) {
-                int tf_ToCountry = 0;
-                String placesInDoc = "";
-                //search for this country in the map:
-                if (tfForDoc.containsKey(countryForThisDoc)) {
-                    tfAndPlaces = tfForDoc.get(countryForThisDoc);
-                } else if (tfForDoc.containsKey(countryForThisDoc.toLowerCase())) {
-                    tfAndPlaces = tfForDoc.get(countryForThisDoc.toLowerCase());
-                }
-
-                //if we found this country in the tf map:
-                if (tfAndPlaces != null) {
-                    tf_ToCountry = tfAndPlaces.getKey();
-                    placesInDoc = tfAndPlaces.getValue();
-                }
-
-
-
-
-                //if there is entry to this country, add the doc to the posting line of this country
-                if (lineToPosting_Countries.containsKey(countryForThisDoc))
-                    //country : doc1 3 2!565!992,doc2 1 654,doc19 2...
-                    lineToPosting_Countries.replace(countryForThisDoc, lineToPosting_Countries.get(countryForThisDoc).append("," + docName + " " + tf_ToCountry + " " + placesInDoc));
+            Pair<Integer, String> tfAndPlaces;
+            //adding the doc and term to the lines to posting MAP
+            for (String termInDoc : tfForDoc.keySet()) {
+                tfAndPlaces = tfForDoc.get(termInDoc);
+                if (linesToPosting.containsKey(termInDoc))//if there is entry to this term, add the doc to the posting line of this term
+                    //term : doc1 3 6!205!544,doc2 1 6,doc19 2...
+                    linesToPosting.replace(termInDoc, linesToPosting.get(termInDoc).append("," + docName + " " + tfAndPlaces.getKey() + " " + tfAndPlaces.getValue()));
                 else
-                    lineToPosting_Countries.put(countryForThisDoc, new StringBuilder(countryForThisDoc + ": " + docName + " " + tf_ToCountry + " " + placesInDoc));
+                    linesToPosting.put(termInDoc, new StringBuilder(docName + " " + tfAndPlaces.getKey() + " " + tfAndPlaces.getValue()));
             }
+
+
+            //------------------------
+            //-------Countries--------
+            //-----add to posting-----
+            //------------------------
+            //taking the country name of this doc
+            Document docToPosting = processor.readFile.allDocs_Map.get(docName);
+            tfAndPlaces = null;
+            //check if the doc wasn't removed from the map
+            if (docToPosting != null) {
+                String countryForThisDoc = ParseCountryForDoc(docToPosting.getCountry());
+
+                if ((!countryForThisDoc.equals("")) && (!countryForThisDoc.equals(" "))) {
+                    int tf_ToCountry = 0;
+                    String placesInDoc = "";
+                    //search for this country in the map:
+                    if (tfForDoc.containsKey(countryForThisDoc)) {
+                        tfAndPlaces = tfForDoc.get(countryForThisDoc);
+                    } else if (tfForDoc.containsKey(countryForThisDoc.toLowerCase())) {
+                        tfAndPlaces = tfForDoc.get(countryForThisDoc.toLowerCase());
+                    }
+
+                    //if we found this country in the tf map:
+                    if (tfAndPlaces != null) {
+                        tf_ToCountry = tfAndPlaces.getKey();
+                        placesInDoc = tfAndPlaces.getValue();
+                    }
+
+
+                    //if there is entry to this country, add the doc to the posting line of this country
+                    if (lineToPosting_Countries.containsKey(countryForThisDoc))
+                        //country : doc1 3 2!565!992,doc2 1 654,doc19 2...
+                        lineToPosting_Countries.replace(countryForThisDoc, lineToPosting_Countries.get(countryForThisDoc).append("," + docName + " " + tf_ToCountry + " " + placesInDoc));
+                    else
+                        lineToPosting_Countries.put(countryForThisDoc, new StringBuilder(countryForThisDoc + ": " + docName + " " + tf_ToCountry + " " + placesInDoc));
+                }
+            }
+
+
+            //cleaning the map of the docs and the tf in this iteration
+            tfForDoc = null;
+        }
+    }
+
+    private boolean isTermExistsWithCapital(String str) {
+        if (doStemming) { // if we need to do stem
+            Stemmer stemmer = new Stemmer();
+            stemmer.add(str.toCharArray(),str.length());
+            stemmer.stem();
+            str = stemmer.toString();
         }
 
+        str = str.toUpperCase();
 
-
-        //cleaning the map of the docs and the tf in this iteration
-        tfForDoc = null;
+        if(isQuery)//if it's query parse
+            return queryTermsMap.containsKey(str);
+        else{
+            boolean a = allTerms_Map.containsKey(str);
+            if (a==true)
+                System.out.println("");
+            return a;
+        }
     }
+
+    private boolean contains_Slash(String currToken) {
+        boolean notNumber = false;
+        boolean containsSlash = false;
+        for (int i = 0;i < currToken.length(); i++) {
+            if ((currToken.charAt(i) == '/')){
+                containsSlash = true;
+            }
+            //if there is a letter in the token, so it's not a number
+            if (Character.isLetter(currToken.charAt(i))){
+                notNumber = true;
+            }
+        }
+        //if it's not a number AND contains slash => we can cut the token to two
+        return (containsSlash && notNumber);
+    }
+
     //this function parse a country from the tag <f p=104>
     private String ParseCountryForDoc(String country) {
         //check if there is country in this doc
@@ -797,6 +890,8 @@ public class Parse {
     //this function fix the lower and upper cases of the term in the maps
     //if we saw term with upper & lower case -> should be lower case
     private void updateLowerUpperCases(String currToken) {
+        numOfTerms++;
+
         // if we need to do stem
         if (doStemming) {
             Stemmer stemmer = new Stemmer();
@@ -806,26 +901,33 @@ public class Parse {
         }
 
         if(!currToken.equals("")) {
-            //update the all terms map:
-            allTerms_Map.remove(toCapitalLetters(currToken));
-            allTerms_Map.put(currToken.toLowerCase(), new TermInfo(currToken.toLowerCase(),-1,-1));
+            if(!isQuery) {
+                //update the all terms map:
+                TermInfo t = allTerms_Map.remove(currToken.toUpperCase());
+                allTerms_Map.put(currToken.toLowerCase(), new TermInfo(currToken.toLowerCase(), t.getDf(), t.getSumTf()));
 
-            //update the term Frequency map:
-            if (termFrequency.containsKey(currToken.toUpperCase())) {
-                int freq = termFrequency.remove(currToken.toUpperCase());
-                termFrequency.put(currToken.toLowerCase(), freq + 1);
-            }
+                //update the term Frequency map:
+                if (termFrequency.containsKey(currToken.toUpperCase())) {
+                    int freq = termFrequency.remove(currToken.toUpperCase());
+                    termFrequency.put(currToken.toLowerCase(), freq + 1);
+                }
 
-            //update the tf for doc map:
-            if (tfForDoc.containsKey(currToken.toUpperCase())) { // if term already exists on map
-                Pair<Integer, String> tfAndPlaces = tfForDoc.remove(currToken.toUpperCase());
-                tfForDoc.put(currToken.toLowerCase(), new Pair<>(tfAndPlaces.getKey() + 1, tfAndPlaces.getValue() + "!" + placeInDoc));
-            }
+                //update the tf for doc map:
+                if (tfForDoc.containsKey(currToken.toUpperCase())) { // if term already exists on map
+                    Pair<Integer, String> tfAndPlaces = tfForDoc.remove(currToken.toUpperCase());
+                    tfForDoc.put(currToken.toLowerCase(), new Pair<>(tfAndPlaces.getKey() + 1, tfAndPlaces.getValue() + "!" + placeInDoc));
+                }
 
-            //update the line to posting map:
-            if (linesToPosting.containsKey(currToken.toUpperCase())) {
-                StringBuilder docsForTerm = linesToPosting.remove(currToken.toUpperCase());
-                linesToPosting.put(currToken.toLowerCase(), docsForTerm);
+                //update the line to posting map:
+                if (linesToPosting.containsKey(currToken.toUpperCase())) {
+                    StringBuilder docsForTerm = linesToPosting.remove(currToken.toUpperCase());
+                    linesToPosting.put(currToken.toLowerCase(), docsForTerm);
+                }
+            }else {
+                if (queryTermsMap.containsKey(currToken.toUpperCase())) {
+                    int freq = queryTermsMap.remove(currToken.toUpperCase());
+                    queryTermsMap.put(currToken.toLowerCase(), freq + 1);
+                }
             }
         }
 
@@ -838,6 +940,7 @@ public class Parse {
     // this function will get term and add it to termFreq and tfForDoc Maps
     private void updateTermFreq (String termToadd) {
 
+        numOfTerms++;
         termToadd = removeUnnecessaryChars(termToadd);
         //System.out.println(termToadd);
 
@@ -848,30 +951,42 @@ public class Parse {
             termToadd = stemmer.toString();
         }
 
-        //add to all terms map:
-        if (!allTerms_Map.containsKey(termToadd))
-            allTerms_Map.put(termToadd,new TermInfo(termToadd,-1,-1));
+        if (!isQuery) { // if we parse terms from readfile
 
-        // if term already exists, update his tf in the map
-        if (termFrequency.containsKey(termToadd)){
-            termFrequency.replace(termToadd,termFrequency.get(termToadd) + 1);
-        }
-        else { // if term doesn't exists on Map, add it
-            termFrequency.put(termToadd,1);
-            numOfTerms++;
+            //add to all terms map:
+            if (!allTerms_Map.containsKey(termToadd))
+                allTerms_Map.put(termToadd, new TermInfo(termToadd, -1, -1));
+
+            // if term already exists, update his tf in the map
+            if (termFrequency.containsKey(termToadd)) {
+                termFrequency.replace(termToadd, termFrequency.get(termToadd) + 1);
+            } else { // if term doesn't exists on Map, add it
+                termFrequency.put(termToadd, 1);
+            }
+
+            //add to tfOfDoc MAP
+            if (tfForDoc.containsKey(termToadd)) { // if term already exists on map
+                Pair<Integer, String> tfAndPlaces = tfForDoc.get(termToadd);
+                tfForDoc.replace(termToadd, new Pair<>(tfAndPlaces.getKey() + 1, tfAndPlaces.getValue() + "!" + placeInDoc));
+            } else { // if term doesn't exists on Map
+                tfForDoc.put(termToadd, new Pair<>(1, "" + placeInDoc));
+            }
+
+            //update the place in doc
+            placeInDoc++;
+
         }
 
-        //add to tfOfDoc MAP
-        if (tfForDoc.containsKey(termToadd)){ // if term already exists on map
-            Pair<Integer,String> tfAndPlaces = tfForDoc.get(termToadd);
-            tfForDoc.replace(termToadd,new Pair<>(tfAndPlaces.getKey() + 1,tfAndPlaces.getValue() + "!" + placeInDoc));
-        }
-        else { // if term doesn't exists on Map
-            tfForDoc.put(termToadd,new Pair<>(1 , "" + placeInDoc));
-        }
+        else { // if we parse from query
+            if (queryTermsMap.containsKey(termToadd)) {
+                int currFreq = queryTermsMap.get(termToadd);
+                queryTermsMap.put(termToadd,currFreq + 1);
 
-        //update the place in doc
-        placeInDoc++;
+            } else {
+                queryTermsMap.put(termToadd, 1);
+
+            }
+        }
     }
     //this function will check if the last two characters of currToken is : st/nd/th/rd
     private boolean hasTypeOfDate(String currToken) {
@@ -925,6 +1040,18 @@ public class Parse {
     //this function takes the text and split it into tokens
     //the delimiters are blank space and enter
     private String[] getTokensFromText(String text) {
-        return text.split("[,{}() -- :| \n ]");
+        return text.split("[{}() :|\n]");
+    }
+    // getter
+    public Map<String, Integer> getQueryTermsMap() {
+        return queryTermsMap;
+    }
+    //setter
+    public void setIsQuery(boolean isQuery) {
+        this.isQuery =  isQuery;
+    }
+    //this function reset the query term map
+    public void resetQueryMap() {
+        this.queryTermsMap = new HashMap<>();
     }
 }
